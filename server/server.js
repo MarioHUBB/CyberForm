@@ -1,5 +1,16 @@
 require('dotenv').config();
 
+const express = require('express');
+const helmet = require('helmet');
+const crypto = require('crypto');
+const cors = require('cors');
+const rateLimit = require('express-rate-limit');
+const path = require('path');
+
+const app = express();
+const PORT = process.env.PORT || 4000;
+
+// Load environment variables
 const MASTER_KEY_B64 = process.env.MASTER_KEY_BASE64;
 const API_TOKEN = process.env.API_TOKEN;
 
@@ -10,17 +21,6 @@ if (!MASTER_KEY_B64 || !API_TOKEN) {
 
 const MASTER_KEY = Buffer.from(MASTER_KEY_B64, 'base64'); // 32 bytes
 
-// server.js
-require('dotenv').config();
-const express = require('express');
-const helmet = require('helmet');
-const crypto = require('crypto');
-const cors = require('cors');
-const rateLimit = require('express-rate-limit');
-
-const app = express();
-const PORT = process.env.PORT || 4000;
-
 // Middleware
 app.use(helmet());
 app.use(express.json({ limit: '1mb' }));
@@ -29,13 +29,21 @@ app.use(cors({
 }));
 
 // Rate limiter
-const limiter = rateLimit({ windowMs: 60*1000, max: 30 });
+const limiter = rateLimit({ windowMs: 60 * 1000, max: 30 });
 app.use(limiter);
 
-// Simple token auth
+// Serve static HTML, CSS, JS files from parent folder
+app.use(express.static(path.join(__dirname, '..')));
+
+// Root route -> index.html
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, '..', 'index.html'));
+});
+
+// Simple token auth middleware
 function requireToken(req, res, next) {
-  //const t = req.get('x-api-token') || '';
-  //if (t !== API_TOKEN) return res.status(401).json({ error: 'Unauthorized' });
+  // const t = req.get('x-api-token') || '';
+  // if (t !== API_TOKEN) return res.status(401).json({ error: 'Unauthorized' });
   next();
 }
 
@@ -60,7 +68,7 @@ function serverDecrypt(b64blob) {
   return pt.toString('utf8');
 }
 
-// Endpoints
+// API Endpoints
 app.post('/api/encrypt', requireToken, (req, res) => {
   try {
     const { plaintext } = req.body;
