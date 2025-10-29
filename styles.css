@@ -1,0 +1,61 @@
+/* General body styling */
+body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    background-color: #cee0f5;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh; /* full height */
+}
+
+/* Container for the page content */
+.container {
+    background: #ffffff;
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+    width: 90%;
+    max-width: 600px;
+    text-align: center;
+}
+
+/* Page heading */
+.container h1 {
+    margin-bottom: 20px;
+    color: #333;
+}
+
+/* Textareas */
+textarea {
+    width: 100%;
+    padding: 10px;
+    border-radius: 10px;
+    border: 1px solid #ccc;
+    resize: none;
+    font-size: 16px;
+}
+
+/* Buttons */
+button.home-btn {
+    background-color: #849ebd;
+    color: white;
+    border: none;
+    border-radius: 25px;
+    padding: 10px 20px;
+    margin: 10px 5px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background 0.3s, transform 0.2s;
+}
+
+button.home-btn:hover {
+    background-color: #6a84a0;
+    transform: scale(1.05);
+}
+
+/* Make buttons inline */
+button {
+    display: inline-block;
+}

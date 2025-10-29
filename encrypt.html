@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Encrypt / Decrypt</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="container">
+    <button onclick="window.location.href='index.html'" class="home-btn">Back to Home</button>
+    <h1>Encryption / Decryption Tool</h1>
+    
+    <textarea id="inputData" placeholder="Enter text here..." rows="6" style="width:100%; margin-bottom:10px;"></textarea>
+    <button id="encryptBtn" class="home-btn">Encrypt</button>
+    <button id="decryptBtn" class="home-btn">Decrypt</button>
+    
+    <textarea id="outputData" placeholder="Output will appear here..." rows="6" style="width:100%; margin-top:10px;"></textarea>
+    <button id="copyOutput" class="home-btn">Copy Output to Clipboard</button>
+    <p id="copyOutputMessage" style="color:green;"></p>
+</div>
+
+<script>
+
+// Encrypt
+document.getElementById('encryptBtn').addEventListener('click', async () => {
+    const input = document.getElementById('inputData').value;
+    if (!input) return alert('Enter text to encrypt');
+
+    try {
+        const res = await fetch('http://127.0.0.1:4000/api/encrypt', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ plaintext: input })
+        });
+        const data = await res.json();
+        if (data.error) throw new Error(data.error);
+        document.getElementById('outputData').value = data.ciphertext;
+    } catch (err) {
+        alert('Encryption failed: ' + err.message);
+    }
+});
+
+// Decrypt
+document.getElementById('decryptBtn').addEventListener('click', async () => {
+    const input = document.getElementById('inputData').value;
+    if (!input) return alert('Enter text to decrypt');
+
+    try {
+        const res = await fetch('http://127.0.0.1:4000/api/decrypt', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ ciphertext: input })
+        });
+        const data = await res.json();
+        if (data.error) throw new Error(data.error);
+        document.getElementById('outputData').value = data.plaintext;
+    } catch (err) {
+        alert('Decryption failed: ' + err.message);
+    }
+});
+
+// Copy Output to Clipboard
+document.getElementById('copyOutput').addEventListener('click', () => {
+    const output = document.getElementById('outputData').value;
+    if (!output) {
+        alert('No output to copy!');
+        return;
+    }
+    navigator.clipboard.writeText(output).then(() => {
+        const msg = document.getElementById('copyOutputMessage');
+        msg.textContent = 'Output copied to clipboard!';
+        setTimeout(() => msg.textContent = '', 2000);
+    }).catch(err => {
+        alert('Failed to copy output: ' + err);
+    });
+});
+</script>
+
+</body>
+</html>
