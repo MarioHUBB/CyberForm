@@ -53,10 +53,25 @@
     <h1>Welcome to Cyber Form</h1>
     <p>Your interactive cybersecurity learning and testing platform</p>
 
-    <button class="home-btn" onclick="window.location.href='password.html'">Password Strength Checker</button>
-    <button class="home-btn" onclick="window.location.href='encrypt.html'">Encryption / Decryption Tool</button>
-    <button class="home-btn" onclick="window.location.href='learning.html'">Learning Hub</button>
-    <button class="home-btn" onclick="window.location.href='about.html'">About & Contact</button>
+    <button class="home-btn" id="btnPassword">Password Strength Checker</button>
+    <button class="home-btn" id="btnEncrypt">Encryption / Decryption Tool</button>
+    <button class="home-btn" id="btnLearning">Learning Hub</button>
+    <button class="home-btn" id="btnAbout">About & Contact</button>
 </div>
+
+<script>
+    document.getElementById('btnPassword').addEventListener('click', () => {
+        window.location.href = 'password.html';
+    });
+    document.getElementById('btnEncrypt').addEventListener('click', () => {
+        window.location.href = 'encrypt.html';
+    });
+    document.getElementById('btnLearning').addEventListener('click', () => {
+        window.location.href = 'learning.html';
+    });
+    document.getElementById('btnAbout').addEventListener('click', () => {
+        window.location.href = 'about.html';
+    });
+</script>
 </body>
 </html>

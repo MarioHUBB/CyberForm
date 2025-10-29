@@ -8,7 +8,7 @@
 </head>
 <body>
 <div class="container">
-    <button onclick="window.location.href='index.html'" class="home-btn">Back to Home</button>
+    <button id="homeBtn" class="home-btn">Back to Home</button>
     <h1>About Cyber Form</h1>
 
     <p>Hello! I’m <strong>Mario Dumba</strong>, a cybersecurity student passionate about building secure and user-friendly tools. This website demonstrates my skills in:</p>
@@ -25,5 +25,12 @@
         <li>Instagram: <a href="https://www.instagram.com/modestmarioo/" target="_blank">@modestmarioo</a></li>
     </ul>
 </div>
+
+<script>
+    // Home button listener
+    document.getElementById('homeBtn').addEventListener('click', () => {
+        window.location.href = 'index.html';
+    });
+</script>
 </body>
 </html>

@@ -8,7 +8,7 @@
 </head>
 <body>
 <div class="container">
-    <button onclick="window.location.href='index.html'" class="home-btn">Back to Home</button>
+    <button id="homeBtn" class="home-btn">Back to Home</button>
     <h1>Cyber Form Learning Hub</h1>
 
     <h2>Password Strength Checker</h2>
@@ -26,5 +26,12 @@
     <p>We use strong algorithms to demonstrate encryption concepts. The key is securely stored on the server, so users cannot access or reveal it. This ensures your encrypted data is safe while using our site.</p>
     <p>Encryption is essential for protecting sensitive information, such as passwords, messages, and personal data, from unauthorized access.</p>
 </div>
+
+<script>
+    // Home button listener
+    document.getElementById('homeBtn').addEventListener('click', () => {
+        window.location.href = 'index.html';
+    });
+</script>
 </body>
 </html>
