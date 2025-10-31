@@ -3,35 +3,39 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Cyber Form - Learning Hub</title>
+<title>Learning Hub - Mario's Cyber Form</title>
 <link rel="stylesheet" href="styles.css">
 </head>
 <body>
 <div class="container">
     <button id="homeBtn" class="home-btn">Back to Home</button>
-    <h1>Cyber Form Learning Hub</h1>
+    <h1>CyberForm Learning Hub</h1>
 
     <h2>Password Strength Checker</h2>
-    <p>Our password strength checker helps you evaluate how strong your password is. We analyze:</p>
+    <p>The password strength checker helps you understand the security of your passwords. It analyzes:</p>
     <ul>
-        <li>Length of the password</li>
-        <li>Mix of lowercase, uppercase, digits, and symbols</li>
-        <li>Common patterns or dictionary words that weaken passwords</li>
+        <li>Length and complexity of the password</li>
+        <li>Use of lowercase, uppercase, digits, and symbols</li>
+        <li>Detection of common patterns and dictionary words</li>
     </ul>
-    <p>We calculate the <strong>entropy</strong> of your password, which is measured in bits. Entropy indicates how unpredictable a password is. The higher the bits, the stronger the password.</p>
-    <p>Strong passwords protect you from hackers and online attacks, so it’s important to use unique, complex passwords for every account.</p>
+    <p>Passwords are evaluated using entropy, measured in bits. Higher entropy indicates stronger, more secure passwords that are harder for attackers to guess.</p>
+    <p>The page generates strong passwords by randomly combining lowercase letters, uppercase letters, numbers, and symbols according to your selected criteria, ensuring high entropy and resistance to guessing or brute-force attacks.</p>
 
     <h2>Encryption / Decryption Tool</h2>
-    <p>Our encryption tool allows you to securely encrypt and decrypt text. Encryption converts your data into a secret format that cannot be read without the correct key. Decryption reverses this process.</p>
-    <p>We use strong algorithms to demonstrate encryption concepts. The key is securely stored on the server, so users cannot access or reveal it. This ensures your encrypted data is safe while using our site.</p>
-    <p>Encryption is essential for protecting sensitive information, such as passwords, messages, and personal data, from unauthorized access.</p>
+    <p>The encryption tool allows you to securely encrypt and decrypt text. Encryption converts your data into a secure format that cannot be read without the proper key, while decryption restores it to its original form.</p>
+    <p>This demonstrates important cybersecurity concepts:</p>
+    <ul>
+        <li>Symmetric key encryption</li>
+        <li>Safe handling of sensitive information</li>
+        <li>Client-side vs server-side encryption considerations</li>
+    </ul>
+    <p>Using this tool helps understand how data protection works in real-world applications, like securing passwords, messages, and personal data.</p>
 </div>
 
 <script>
-    // Home button listener
-    document.getElementById('homeBtn').addEventListener('click', () => {
-        window.location.href = 'index.html';
-    });
+document.getElementById('homeBtn').addEventListener('click', () => {
+    window.location.href = 'index.html';
+});
 </script>
 </body>
 </html>
