@@ -1,5 +1,4 @@
 require('dotenv').config();
-
 const express = require('express');
 const helmet = require('helmet');
 const crypto = require('crypto');
@@ -24,23 +23,29 @@ const MASTER_KEY = Buffer.from(MASTER_KEY_B64, 'base64'); // 32 bytes
 // Middleware
 app.use(helmet());
 app.use(express.json({ limit: '1mb' }));
-app.use(cors({
-  origin: ['http://127.0.0.1:5500'] // adjust if you deploy elsewhere
-}));
+app.use(cors()); // allow all origins for frontend
 
 // Rate limiter
 const limiter = rateLimit({ windowMs: 60 * 1000, max: 30 });
 app.use(limiter);
 
-// Serve static HTML, CSS, JS files from parent folder
+// Serve all static files from the root folder
 app.use(express.static(path.join(__dirname, '..')));
+
+// Serve HTML pages explicitly
+const htmlFiles = ['index.html', 'encrypt.html', 'password.html', 'about.html', 'learning.html'];
+htmlFiles.forEach(file => {
+  app.get(`/${file}`, (req, res) => {
+    res.sendFile(path.join(__dirname, '..', file));
+  });
+});
 
 // Root route -> index.html
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, '..', 'index.html'));
 });
 
-// Simple token auth middleware
+// Simple token auth middleware (optional)
 function requireToken(req, res, next) {
   // const t = req.get('x-api-token') || '';
   // if (t !== API_TOKEN) return res.status(401).json({ error: 'Unauthorized' });
@@ -72,29 +77,26 @@ function serverDecrypt(b64blob) {
 app.post('/api/encrypt', requireToken, (req, res) => {
   try {
     const { plaintext } = req.body;
-    if (typeof plaintext !== 'string' || !plaintext.length) {
-      return res.status(400).json({ error: 'plaintext required' });
-    }
+    if (typeof plaintext !== 'string' || !plaintext.length) return res.status(400).json({ error: 'plaintext required' });
     const ciphertext = serverEncrypt(plaintext);
-    return res.json({ ciphertext });
+    res.json({ ciphertext });
   } catch (err) {
     console.error('encrypt error', err);
-    return res.status(500).json({ error: 'internal error' });
+    res.status(500).json({ error: 'internal error' });
   }
 });
 
 app.post('/api/decrypt', requireToken, (req, res) => {
   try {
     const { ciphertext } = req.body;
-    if (typeof ciphertext !== 'string' || !ciphertext.length) {
-      return res.status(400).json({ error: 'ciphertext required' });
-    }
+    if (typeof ciphertext !== 'string' || !ciphertext.length) return res.status(400).json({ error: 'ciphertext required' });
     const plaintext = serverDecrypt(ciphertext);
-    return res.json({ plaintext });
+    res.json({ plaintext });
   } catch (err) {
     console.error('decrypt error', err.message);
-    return res.status(400).json({ error: 'decryption failed' });
+    res.status(400).json({ error: 'decryption failed' });
   }
 });
 
+// Start server
 app.listen(PORT, () => console.log(`Server listening on port ${PORT}`));

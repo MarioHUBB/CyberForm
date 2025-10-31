@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF‑8">
+<meta name="viewport" content="width=device‑width, initial‑scale=1.0">
 <title>Encrypt / Decrypt</title>
 <link rel="stylesheet" href="styles.css">
 </head>
@@ -25,13 +25,14 @@ document.getElementById('btnHome').addEventListener('click', () => {
     window.location.href = 'index.html';
 });
 
-// Encrypt
+const API_BASE = 'https://cyberform-69hf.onrender.com';
+
 document.getElementById('encryptBtn').addEventListener('click', async () => {
     const input = document.getElementById('inputData').value;
     if (!input) return alert('Enter text to encrypt');
 
     try {
-        const res = await fetch('http://127.0.0.1:4000/api/encrypt', {
+        const res = await fetch(API_BASE + '/api/encrypt', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -46,13 +47,12 @@ document.getElementById('encryptBtn').addEventListener('click', async () => {
     }
 });
 
-// Decrypt
 document.getElementById('decryptBtn').addEventListener('click', async () => {
     const input = document.getElementById('inputData').value;
     if (!input) return alert('Enter text to decrypt');
 
     try {
-        const res = await fetch('http://127.0.0.1:4000/api/decrypt', {
+        const res = await fetch(API_BASE + '/api/decrypt', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -67,7 +67,6 @@ document.getElementById('decryptBtn').addEventListener('click', async () => {
     }
 });
 
-// Copy Output to Clipboard
 document.getElementById('copyOutput').addEventListener('click', () => {
     const output = document.getElementById('outputData').value;
     if (!output) {
