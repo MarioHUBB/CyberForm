@@ -1,21 +1,40 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF‑8">
-<meta name="viewport" content="width=device‑width, initial‑scale=1.0">
-<title>Encrypt / Decrypt</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mario's Cyber Form - Encrypt / Decrypt</title>
 <link rel="stylesheet" href="styles.css">
+<style>
+.home-btn {
+    background:#849ebd;
+    color:#fff;
+    border:none;
+    padding:10px 16px;
+    border-radius:10px;
+    cursor:pointer;
+    margin:4px 2px;
+    transition: transform .18s ease, background .18s ease;
+}
+.home-btn:hover { transform:scale(1.06); background:#6c88a3; }
+textarea { width:100%; padding:10px; border-radius:8px; border:1px solid #cfdbe6; resize:vertical; font-size:14px; }
+.container { max-width:700px; margin:30px auto; font-family:"Segoe UI", Roboto, Arial, sans-serif; }
+button-group { margin-top:8px; }
+</style>
 </head>
 <body>
 <div class="container">
     <button id="btnHome" class="home-btn">Back to Home</button>
     <h1>Encryption / Decryption Tool</h1>
-    
-    <textarea id="inputData" placeholder="Enter text here..." rows="6" style="width:100%; margin-bottom:10px;"></textarea>
-    <button id="encryptBtn" class="home-btn">Encrypt</button>
-    <button id="decryptBtn" class="home-btn">Decrypt</button>
-    
-    <textarea id="outputData" placeholder="Output will appear here..." rows="6" style="width:100%; margin-top:10px;"></textarea>
+    <p>Your interactive cybersecurity learning and testing platform</p>
+
+    <textarea id="inputData" placeholder="Enter text here..." rows="6"></textarea>
+    <div style="margin-top:8px;">
+        <button id="encryptBtn" class="home-btn">Encrypt</button>
+        <button id="decryptBtn" class="home-btn">Decrypt</button>
+    </div>
+
+    <textarea id="outputData" placeholder="Output will appear here..." rows="6" style="margin-top:10px;"></textarea>
     <button id="copyOutput" class="home-btn">Copy Output to Clipboard</button>
     <p id="copyOutputMessage" style="color:green;"></p>
 </div>
@@ -25,61 +44,70 @@ document.getElementById('btnHome').addEventListener('click', () => {
     window.location.href = 'index.html';
 });
 
-const API_BASE = 'https://cyberform-69hf.onrender.com';
+// ---------- Front-end demo key ----------
+const DEMO_KEY_B64 = 'D6eBC5j/aCDx/7tuFP3VHzo4GztrhZnhTZt4RLkEGzY=';
 
-document.getElementById('encryptBtn').addEventListener('click', async () => {
-    const input = document.getElementById('inputData').value;
-    if (!input) return alert('Enter text to encrypt');
+async function importKey(){
+    const raw = Uint8Array.from(atob(DEMO_KEY_B64), c=>c.charCodeAt(0));
+    return await crypto.subtle.importKey(
+        'raw',
+        raw,
+        { name: 'AES-GCM' },
+        false,
+        ['encrypt','decrypt']
+    );
+}
 
-    try {
-        const res = await fetch(API_BASE + '/api/encrypt', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ plaintext: input })
-        });
-        const data = await res.json();
-        if (data.error) throw new Error(data.error);
-        document.getElementById('outputData').value = data.ciphertext;
-    } catch (err) {
-        alert('Encryption failed: ' + err.message);
-    }
+// ---------- Encrypt / Decrypt ----------
+async function encryptText(key, text){
+    const encoder = new TextEncoder();
+    const iv = crypto.getRandomValues(new Uint8Array(12));
+    const ct = await crypto.subtle.encrypt({name:'AES-GCM', iv}, key, encoder.encode(text));
+    const combined = new Uint8Array(iv.length + ct.byteLength);
+    combined.set(iv,0);
+    combined.set(new Uint8Array(ct), iv.length);
+    return btoa(String.fromCharCode(...combined));
+}
+
+async function decryptText(key, b64){
+    const data = Uint8Array.from(atob(b64), c=>c.charCodeAt(0));
+    const iv = data.slice(0,12);
+    const ct = data.slice(12);
+    const pt = await crypto.subtle.decrypt({name:'AES-GCM', iv}, key, ct);
+    return new TextDecoder().decode(pt);
+}
+
+// ---------- Button Actions ----------
+const input = document.getElementById('inputData');
+const output = document.getElementById('outputData');
+const encryptBtn = document.getElementById('encryptBtn');
+const decryptBtn = document.getElementById('decryptBtn');
+const copyBtn = document.getElementById('copyOutput');
+const copyMsg = document.getElementById('copyOutputMessage');
+
+let cryptoKey = null;
+importKey().then(k=>cryptoKey=k);
+
+encryptBtn.addEventListener('click', async ()=>{
+    if(!input.value) return alert('Enter text to encrypt');
+    try{
+        output.value = await encryptText(cryptoKey, input.value);
+    }catch(e){ alert('Encryption failed: '+e.message); console.error(e); }
 });
 
-document.getElementById('decryptBtn').addEventListener('click', async () => {
-    const input = document.getElementById('inputData').value;
-    if (!input) return alert('Enter text to decrypt');
-
-    try {
-        const res = await fetch(API_BASE + '/api/decrypt', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ ciphertext: input })
-        });
-        const data = await res.json();
-        if (data.error) throw new Error(data.error);
-        document.getElementById('outputData').value = data.plaintext;
-    } catch (err) {
-        alert('Decryption failed: ' + err.message);
-    }
+decryptBtn.addEventListener('click', async ()=>{
+    if(!input.value) return alert('Enter text to decrypt');
+    try{
+        output.value = await decryptText(cryptoKey, input.value);
+    }catch(e){ alert('Decryption failed: '+e.message); console.error(e); }
 });
 
-document.getElementById('copyOutput').addEventListener('click', () => {
-    const output = document.getElementById('outputData').value;
-    if (!output) {
-        alert('No output to copy!');
-        return;
-    }
-    navigator.clipboard.writeText(output).then(() => {
-        const msg = document.getElementById('copyOutputMessage');
-        msg.textContent = 'Output copied to clipboard!';
-        setTimeout(() => msg.textContent = '', 2000);
-    }).catch(err => {
-        alert('Failed to copy output: ' + err);
-    });
+copyBtn.addEventListener('click', ()=>{
+    if(!output.value) return alert('No output to copy!');
+    navigator.clipboard.writeText(output.value).then(()=>{
+        copyMsg.textContent='Output copied to clipboard!';
+        setTimeout(()=>copyMsg.textContent='',2000);
+    }).catch(e=>alert('Failed to copy output: '+e));
 });
 </script>
 
